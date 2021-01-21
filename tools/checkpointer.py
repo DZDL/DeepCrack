@@ -8,7 +8,6 @@ from queue import Queue
 
 class Checkpointer(object):
     r"""Checkpointer for objects using torch serialization.
-
     Args:
         name (str): Name of the checkpointer. This will also be used for
             the checkpoint filename.
@@ -20,7 +19,6 @@ class Checkpointer(object):
         add_count (bool, optional): Add (zero-padded) counter to checkpoint filenames (default True).
         max_queue (int, optional):
         name format [name,_,tag,_,counter, _%Y-%m-%d-%H-%M-%S]
-
     """
 
     def __init__(self, name, directory='.', overwrite=False, verbose=True, timestamp=False, add_count=True,
@@ -63,6 +61,7 @@ class Checkpointer(object):
 
     def _set_state(self, obj, state):
         if hasattr(obj, 'load_state_dict'):
+            state = {key.replace("module.", ""): value for key, value in state.items()}
             obj.load_state_dict(state)
             return obj
         else:
@@ -82,13 +81,11 @@ class Checkpointer(object):
 
     def save(self, obj, tag=None, *args, **kwargs):
         """Saves a checkpoint of an object.
-
         Args:
             obj: Object to save (must be serializable by torch).
             tag (str, optional): Tag to add to saved filename (default None).
             args: Arguments to pass to `torch.save`.
             kwargs: Keyword arguments to pass to `torch.save`.
-
         """
 
         self.counter += 1
@@ -118,20 +115,17 @@ class Checkpointer(object):
 
     def load(self, obj=None, preprocess=None, multi_gpu=False, *args, **kwargs):
         """Loads a checkpoint from disk.
-
         Args:
             obj (optional): Needed if we load the `state_dict` of an `nn.Module`.
             preprocess (optional): Callable to preprocess the loaded object.
             args: Arguments to pass to `torch.load`.
             kwargs: Keyword arguments to pass to `torch.load`.
-
         Returns:
             The loaded file.
-
         """
         if isinstance(obj, str) and obj.split('.')[-1] == 'pth':  # 正常加载
             self._say("Loaded checkpoint: {0}".format(obj))
-            obj = torch.load(obj)
+            obj = torch.load(obj, map_location=torch.device('cpu'))
         elif self.counter > 0 and obj is None:
             loaded = torch.load(self.filename, *args, **kwargs)
             if preprocess is not None:
@@ -149,5 +143,3 @@ class Checkpointer(object):
 
 
         return obj
-
-

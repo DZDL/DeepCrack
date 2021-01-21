@@ -7,8 +7,10 @@ import torch
 
 def get_optimizer(model):
     if cfg.use_adam:
+        print('USING ADAM OPTIMIZER')
         return torch.optim.Adam(model.parameters(), lr=cfg.lr, weight_decay=cfg.weight_decay)
     else:
+        print('USING SGD OPTIMIZER')
         return torch.optim.SGD(model.parameters(), lr=cfg.lr, weight_decay=cfg.weight_decay, momentum=cfg.momentum, )
 
 
@@ -28,7 +30,7 @@ class DeepCrackTrainer(nn.Module):
         # -------------------- Loss --------------------- #
 
         self.mask_loss = nn.BCEWithLogitsLoss(reduction='mean',
-                                              pos_weight=torch.cuda.FloatTensor([cfg.pos_pixel_weight]))
+                                              pos_weight=torch.FloatTensor([cfg.pos_pixel_weight]))
 
         self.log_loss = {}
         self.log_acc = {}

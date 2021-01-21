@@ -1,0 +1,5 @@
+# Trash files
+*__pycache__*
+
+# Weights
+*.pth

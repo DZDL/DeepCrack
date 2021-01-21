@@ -1,0 +1,1 @@
+data/1271.jpg data/1271.bmp

@@ -27,23 +27,24 @@ def test(test_data_path='data/test_example.txt',
 
     # -------------------- build trainer --------------------- #
 
-    device = torch.device("cuda")
-    num_gpu = torch.cuda.device_count()
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+    # num_gpu = torch.cuda.device_count()
 
     model = DeepCrack()
 
-    model = torch.nn.DataParallel(model, device_ids=range(num_gpu))
+    model = torch.nn.DataParallel(model)
     model.to(device)
 
     trainer = DeepCrackTrainer(model).to(device)
 
-    model.load_state_dict(trainer.saver.load(pretrained_model, multi_gpu=True))
+    model.load_state_dict(trainer.saver.load(pretrained_model, multi_gpu=False), strict=False)
 
     model.eval()
 
     with torch.no_grad():
         for names, (img, lab) in tqdm(zip(test_list, test_loader)):
-            test_data, test_target = img.type(torch.cuda.FloatTensor).to(device), lab.type(torch.cuda.FloatTensor).to(
+            test_data, test_target = img.type(torch.FloatTensor).to(device), lab.type(torch.FloatTensor).to(
                 device)
             test_pred = trainer.val_op(test_data, test_target)
             test_pred = torch.sigmoid(test_pred[0].cpu().squeeze())

@@ -47,8 +47,12 @@ def main():
         pretrained_dict = trainer.saver.load(cfg.pretrained_model, multi_gpu=True)
         model_dict = model.state_dict()
 
-        pretrained_dict = {k: v for k, v in pretrained_dict.items() if k in model_dict}
+        # pretrained_dict = {k: v for k, v in pretrained_dict.items() if k in model_dict}
+        # model_dict.update(pretrained_dict)
+
+        pretrained_dict = {key.replace("module.", ""): value for key, value in pretrained_dict.items()}
         model_dict.update(pretrained_dict)
+
         model.load_state_dict(model_dict)
         trainer.vis.log('load checkpoint: %s' % cfg.pretrained_model, 'train info')
 
