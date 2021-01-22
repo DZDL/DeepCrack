@@ -1,4 +1,4 @@
-# DeepCrack: Learning Hierarchical Convolutional Features for Crack Detection
+# (Can't be implemented) DeepCrack: Learning Hierarchical Convolutional Features for Crack Detection
 
 We provide the codes, the datasets, and the pretrained model.
 
