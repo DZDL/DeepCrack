@@ -1,4 +1,6 @@
-# (Can't be implemented) DeepCrack: Learning Hierarchical Convolutional Features for Crack Detection
+# (Can't be implemented due no pretrained models and GPU required) 
+
+# ONLY CPU DeepCrack: Learning Hierarchical Convolutional Features for Crack Detection
 
 We provide the codes, the datasets, and the pretrained model.
 
